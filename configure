@@ -1577,7 +1577,7 @@ rm -f conftest*
   rm -f conf.aalibtest
 
 CFLAGS="$CFLAGS $AALIB_CFLAGS"
-LIBS="$CLFAGS $AALIB_LIBS"
+LIBS="$LIBS $AALIB_LIBS"
 
 trap '' 1 2 15
 cat > confcache <<\EOF

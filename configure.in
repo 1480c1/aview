@@ -15,6 +15,6 @@ AC_CHECK_FUNCS(isatty)
 dnl Check for AA-lib
 AM_PATH_AALIB(1.4.0, , AC_MSG_ERROR([*** AALIB >= 1.4.0 not installed - please install first ***]))
 CFLAGS="$CFLAGS $AALIB_CFLAGS"
-LIBS="$CLFAGS $AALIB_LIBS"
+LIBS="$LIBS $AALIB_LIBS"
 
 AC_OUTPUT(Makefile)
