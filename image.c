@@ -1,15 +1,13 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <malloc.h>
+#include "config.h"
 
 int imgwidth, imgheight;
 unsigned char *imgdata;
 #define PBM 0
 #define PGM 1
 #define PPM 2
-
-/* no jo, zase byl nekdo liny pouzit autoconf... */
-#define HAVE_ISATTY
 
 int load_image(char *name)
 {

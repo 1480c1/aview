@@ -65,7 +65,7 @@ int count;
 int i;
 /*	puts( "color_64" ); */
 	ops = *(short int *)data;
-	((short int *)data) += 1;
+	data = (void *)(((short int *)data) + 1);
 	while( ops-- > 0 ) {
 		start += *(uchar *)data;
 		data = (void *) ((uchar *)data + 1);
@@ -271,7 +271,7 @@ int index_x;
 					/* type now contains nr of bytes to copy to video */
 					memcpy( graph_mem + index + index_x, (uchar *)data, -type );
 					index_x -= type;
-					(uchar *)data -= type;
+					data = (void *)((uchar *)data - type);
 				}
 				else {
 					memset( graph_mem + index + index_x, *(uchar *)data++, type );
