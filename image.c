@@ -20,7 +20,7 @@ int load_image(char *name)
     if (name[0]=='\0') {
 #ifdef HAVE_ISATTY
       if (isatty(STDIN_FILENO)) {
-        printf("Missing filename.\n");
+        printf("Missing filename.\n Use --help for list of options.");
         return 0;
       }
 #endif
