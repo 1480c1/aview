@@ -1,6 +1,7 @@
 #include <aalib.h>
 #include "image.h"
 #include "ui.h"
+#include "config.h"
 
 #define NAMELEN 256
 
@@ -15,7 +16,7 @@ static void showhelp(char *prgname)
 
 static void showversion(char *prgname)
 {
-   printf("This is %s version 1.2a\n", prgname);
+   printf("This is %s version %s\n", prgname, VERSION);
 }
 
 static void parse_cmdline( int argc, char *argv[])
