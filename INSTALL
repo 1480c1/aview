@@ -1,0 +1,12 @@
+
+To compile Aview at UNIX enviroment use:
+
+./configure
+make
+make install
+
+This should work in most cases. I believe.
+
+MS-DOS users:
+
+make -f Makefile.dos

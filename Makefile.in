@@ -1,0 +1,47 @@
+CC     = @CC@
+CFLAGS = @CFLAGS@
+LIBS   = @LIBS@
+LFLAGS = @LDFLAGS@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+datadir= @datadir@
+bindir= @bindir@
+mandir= @mandir@
+infodir= @infodir@
+
+
+INCL = config.h 
+ 
+OBJS = main.o \
+       ui.o \
+       shrink.o \
+       image.o 
+
+OBJS1 = flip.o \
+        general.o
+
+all:	aview aaflip
+
+
+aview:  $(OBJS)
+	$(CC) $(CFLAGS) $(LFLAGS) -o aview $(OBJS) $(LIBS)
+
+
+aaflip: $(OBJS1)
+	$(CC) $(CFLAGS) $(LFLAGS) -o aaflip $(OBJS1) $(LIBS)
+
+clean:
+	rm -f aview
+	rm -f aaflip
+	rm -f core `find . -name '*.[oas]' -print`
+	rm -f core `find . -name '*~' -print`
+	rm -f core `find . -type f -name 'core' -print`
+
+distclean:clean
+	rm -f config.log config.status config.cache Makefile
+
+install:
+	@INSTALL@ -s aview ${bindir}
+	@INSTALL@ -s aaflip ${bindir}
+	@INSTALL@ asciiview ${bindir}
+

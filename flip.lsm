@@ -1,0 +1,21 @@
+Begin2
+Title        = flip
+Version      = 0.3
+Desc1        = Flic animation file player for the Linux console using
+Desc2        = svgalib. Supports .fli and .flc format files, including
+Desc3        = SVGA resolution files.
+Author       = John Remyn
+AuthorEmail  =
+Maintainer   = H. Hanemaayer
+MaintEmail   = hhanemaa@cs.ruu.nl
+Site1        = sunsite.unc.edu
+Path1        = /pub/Linux/apps/graphics/viewers
+File1        = flip03.tgz
+FileSize1    = 15K
+Required1    = svgalib v0.91 or higher, VGA compatible card.
+CopyPolicy1  = Freely distributable.
+Keywords     = graphics, animation, FLI, FLC, flic, viewer, VGA
+Entered      = 15DEC93
+EnteredBy    = H. Hanemaayer
+CheckedEmail = hhanemaa@cs.ruu.nl
+End

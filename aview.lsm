@@ -1,0 +1,31 @@
+Begin3
+Title:          Aview - High qualitty ascii art renderer/animation player
+Version:        1.0
+Entered-date:   Jul 25 1996
+
+Description:    aview is an high quality ascii-art image(pgm) browser and
+                animation(fli/flc) player usefull especially with 
+		lynx browser.
+
+Keywords:       X11 ascii-art text cool art ironing cooking fire library c GNU
+		demo fun game fli pgm pnm
+Author:         hubicka@limax.paru.cas.cz (Jan Hubicka)
+		                   (Filip Kupsa)
+		titana@mbox.vol.cz (Mojmir Svoboda)
+		toman@horac.ta.jcu.cz (Kamil Toman)
+Maintained-by:  toman@horac.ta.jcu.cz (Kamil Toman)
+
+Primary-site:   sunsite.unc.edu /pub/Linux/apps/graphics/viewers
+		aview-1.0.tar.gz
+Alternate-site: tsx-11.mit.edu /pub/linux/sources/usr.bin
+		aview-1.0.tar.gz
+
+Platform:       dos (VG + MDA), stdio, curses, slang, X11, gpm, linux-console
+                Sound:  OSS, Sun audio, SGI, DEC Aplha, AIX, HP-UX, DOS 
+		        (GUS CLASSIC, GUS CLASSIC, GUS MAX, GUS ACE, GUS PNP,
+			 SB, ESS, PC-buzzer)
+	
+Copying-policy: GNU GENERAL PUBLIC LICENSE
+End
+
+

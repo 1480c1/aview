@@ -1,0 +1,98 @@
+aaflip -- an ascii arted flic player for aalib
+Version 0.3
+This is modifies version of flip(flic animation file player, see bellow)
+that works in text mode.
+
+ORIGINAL FLIP README
+====================
+
+
+flip -- a flic file player for the Linux console
+Version 0.3
+By John Remyn
+
+This is a non-X flic animation file player for Linux. A VGA compatible card
+is required.
+
+Flic files can usually be recognized by the .fli or .flc extensions at the
+end of their filenames. Fli files are limited to a resolution of 320x200,
+while flc files can have any resolution.
+
+The binary requires svgalib to be installed (svgalib can be found at
+sunsite.unc.edu: /pub/Linux/libs).
+
+The default method of playing is to load the first frame of the animation
+sequence and display it. After this the remainder of the flic file is loaded
+into memory, and the animation starts. The animation ends when q or ctrl-c
+is pressed. There are some flags that control the way the flic file is
+handled: 
+
+-a	Remove frames from memory after processing. Using this option
+        leaves more memory for other processes, but relies on the buffer
+        cache for continuous animation.
+
+-b	Process frames immediately as they are loaded. When using this
+        option the animation frames are shown as soon as the player has read
+        them, so you don't have to wait until the entire file has been
+        read. The disadvantage is that the animation becomes jumpy if the
+        speed set by the animation is higher than the speed of loading.
+
+-c	Keep the screen black while loading the animation. This conflicts
+        with option b, which can give interesting results.
+
+-f	This removes the clock synchronization. This is just for fun, so
+        you can show off the speed of your computer :-)
+
+-n <number>
+	Play the flic file <number> times.
+
+-s <delay>
+	Sets the delay between frames to <delay>*0.01 seconds. Option -s 0
+        is the same as -f.
+
+-	Causes flip to read the flic file from stdin. Using this with option
+	-a may cause trouble since backward seeks are done.
+
+Other options are:
+
+-v	Shows some information about the flic file being played.
+
+-?	Shows a bit of help.
+
+Flc files:
+Flc files with resolutions higher than 320x200 are now supported, out of the
+3 files I could find, 2 work OK, 1 works almost OK.
+There are some considerations to be made when playing big flic files. If the
+file fits completely into memory, there are no problems. However when memory
+is short Linux swaps pages out of memory, which can happen while a frame is
+being decoded. This is not only slow but also results in very ugly
+animation. Animation improves when option -a is used, in which case there
+will be much less swapping (there still is a lot of disk/buffer-cache access
+going on though). Using option -b is also advisable since the animation
+won't be smooth anyway.
+
+
+Bugs: 
+- X and Y offsets are not handled. 
+- Flic files with resolutions smaller (or bigger) than the screen size are
+  probably not handled correctly, but I have yet to see one.
+- At least one of the flc files I have displays a few pixels of trash in a
+  place where they should definately not be. This could be caused by
+  incorrect handling of a page break. When I feel motivated enough I'll try
+  and fix it.
+
+
+Release history:
+
+V0.3a	Added support for FLC files with resolutions greater than 320x200.
+	(A real pain)
+
+V0.2a	Added decoding of DELTA_FLC chunks, so some flc files can also be
+	played. Changed the command line parameters. Removed some small
+	bugs.
+
+V0.1	First release, only just capable of playing fli files.
+
+
+John Remyn (author) (boogyman@xs4all.hacktic.nl may work soon)
+Harm Hanemaayer	hhanemaa@cs.ruu.nl (for mail)

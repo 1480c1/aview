@@ -1,0 +1,20 @@
+Changes in version 1.2
+ o	Updated for aalib-1.1
+ o	Better 'u' menu
+Changes in version 1.1
+ o	Fixed bugs in Makefile
+ o	Do not require efence anymore
+ o	Configure script
+ o	Fixed memory leak in flip.c
+ o	Hide cursor
+ o	Extended documentation
+ o	Faster animation preloading
+ o	Uses faster memcpy/memset functions
+ o	image.c now reads P1 - P6 file formats (pgm, ppm, pnm both raw/ascii)
+ o	gifview obsoleted by asciiview - new script that uses eighter
+ 	imagemagick or netpbm tools to convert image using fifo. 
+	So it is fast and saves memory/disk space
+ o	Added some keys into aaflip - contrast, bright, gamma tunning etc.
+ 	Press 'H' for help
+Changes in version 1.0
+ o	First version (released in a hurry and very broken)
