@@ -7,17 +7,14 @@ clear()
 }
 myconvert()
 {
-   #Uncomment following lines if you want to use pnmtools.  They performs
-   #better than imagemagic but tends to be broken on most systems.
-  
-   if anytopnm $1 >/tmp/aview$$.pgm; then
+   if anytopnm $1 >/tmp/aview$$.pgm 2>/dev/null ; then
      exit
-   elif convert -colorspace gray $1 /tmp/aview$$.pgm; then
+   elif convert -colorspace gray $1 pgm:- 2>/dev/null ; then
      exit
    fi
-   anytopnm $1 >/tmp/aview$$.pgm
+   echo "Failed to convert file format to PNM by both convert and anytopnm" >&2
    while true; do
-     echo "0 " > /tmp/aview$$.pgm
+     echo "0 " 
    done
 }
 filenames=""
@@ -60,11 +57,13 @@ for name in $filenames ; do
 if test -r $name ; then
 case $name in
 *.fli | *.lfc | *.flic )
+  PATH="$PATH:."
   aaflip $options $name
   ;;
 *)
-  myconvert $name &
+  myconvert $name >/tmp/aview$$.pgm &
   pid=$!
+  PATH="$PATH:."
   aview  $options /tmp/aview$$.pgm
   kill $pid 2>/dev/null
 esac
