@@ -7,7 +7,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
+#include <sys/time.h>
+#include <unistd.h>
 #include <aalib.h>
 
 #include "general.h"
@@ -23,7 +24,7 @@ struct OPTIONS {
 	char firstp;		/* 1 = process frames while loading */
 	char blank;		/* 1 = keep black screen while loading */
 	char stdinp;		/* 1 = take flic file from stdin */
-	int speed;		/* speed gotten from command line (or not if -1) */
+	int speed;		/* speed gotten from command line (-1 if nothing gotten) */
 	int playrep;		/* nr of times to play animation */
 } options;
 
@@ -42,7 +43,7 @@ struct FLI {
 	int scr_width;		/* width of screen mode used */
 	int scr_height;		/* guess */
 	int current;		/* current frame index */
-	long clock;		/* time of last processed frame in 1/100 sec */
+	long time;		/* time of last processed frame in usec */
 	FILE *f;		/* file pointer of opened flic file */
 	struct FLI_HEADER h;	/* 128 byte fli file header structure */
 	struct FLI_FRAMECHUNK *frame;
@@ -67,10 +68,10 @@ int i;
 	((short int *)data) += 1;
 	while( ops-- > 0 ) {
 		start += *(uchar *)data;
-		(uchar *)data += 1;
+		data = (void *) ((uchar *)data + 1);
 		if( (count = (int)*(uchar *)data) == 0 )
 			count = 256;
-		(uchar *)data += 1;
+		data = (void *) ((uchar *)data + 1);
 		for( i=0; i<count; i++ ) {
 			/* (s)vgalib requires a table of ints for setting a group
 			 * of colors quickly, but we've got a table of chars :( 
@@ -80,7 +81,7 @@ int i;
 				((int)*((uchar *)data+1)*4),
 				((int)*((uchar *)data+2)*4)
 			);
-			(uchar *)data += 3;
+			data = (void *)((uchar *)data + 3);
 		}
 		start += count;
 	}
@@ -93,20 +94,20 @@ int count;
 int i;
 /*	puts( "color_256" ); */
 	ops = *(short int *)data;
-	(short int *)data += 1; 
+	data = (void *)((short int *)data + 1); 
 	while( ops-- > 0 ) {
 		start += *(uchar *)data;
-		(uchar *)data += 1;
+		data = (void *)((uchar *)data + 1);
 		if( (count = (int)*(uchar *)data) == 0 )
 			count = 256;
-		(uchar *)data += 1;
+		data = (void *)((uchar *)data + 1);
 		for( i=0; i<count; i++ ) {
 			aa_setpalette(pal, start + i, 
 				*(uchar *)data >> 2,
 				*((uchar *)data+1) >> 2,
 				*((uchar *)data+2) >> 2
 			);
-			(uchar *)data += 3;
+			data = (void *)((uchar *)data + 3);
 		}
 		start += count;
 	}
@@ -131,7 +132,7 @@ char setlastbyte;
 /*	puts( "delta flc" ); */
 	/* get nr of lines in chunk */
 	nrlines = *(short int *)data;
-	(short int *)data += 1;
+	data = (void *)((short int *)data + 1);
 	line = 0;
 	setlastbyte = 0;
 	lastbyte = 0;	/* this is just to get rid of a compiler warning */
@@ -140,7 +141,7 @@ char setlastbyte;
 	while( nrlines>0 ) { /* don't put nrlines-- here, the continues don't allow it */
 
 		type = *(short *)data;
-		(short *)data += 1;
+		data = (void *)((short *)data + 1);
 		/* the 2 highest bits of type indicate how to interpret it */
 		if( type<0 ) {
 			if( type&0x4000 ) {
@@ -162,7 +163,7 @@ char setlastbyte;
 			setlastbyte = 1;
 			lastbyte = (uchar)(type & 0x00FF);
 			packets = *(short *)data;
-			(short *)data += 1;
+			data = (void *)((short *)data + 1);
 			/* packets can be 0 now if just the last byte
 			 * changes for this line
 			 */
@@ -180,31 +181,31 @@ char setlastbyte;
 		while( packets-->0 ) {
 			/* get & decode packet */
 			x += *(uchar *)data;
-			(uchar *)data += 1;
+			data = (void *)((uchar *)data + 1);
 			type = *(char *)data;
-			(uchar *)data += 1;
+			data = (void *)((uchar *)data + 1);
 			if( (char)type>=0 ) {
 				/* copy ptype words */
 				type <<= 1;
 				memcpy( index + x, data, type );
 				x += type;
-				(uchar *)data += type;
+				data = (void *)((uchar *)data + type);
 				continue;
 			}
 			type = -(char)type;
 			memsetw( (ushort *)(index + x), *(ushort *)data, type );
 			x += type<<1;
-			(ushort *)data += 1;
+			data = (void *)((ushort *)data + 1);
 		}
 		if( !setlastbyte ) {
-			(uchar *)index += fli->scr_width;
+			index = (char *)((uchar *)index + fli->scr_width);
 			nrlines--;
 			continue;
 		}
 		/* put lastbyte at end of line */
 		*(uchar *)(index + fli->scr_width - 1) = lastbyte;
 		setlastbyte = 0;
-		(uchar *)index += fli->scr_width;
+		index = (char *)((uchar *)index + fli->scr_width);
 		nrlines--;
 	}
 }
@@ -219,29 +220,29 @@ int index_x;
 char type;
 /*	puts( "delta fli" ); */
 	line = *(short int *)data;
-	(short int *)data += 1;
+	data = (void *)((short int *)data + 1);
 	index = graph_mem + line * fli->scr_width;
 	nrlines = *(short int *)data;
-	(short int *)data += 1;
+	data = (void *)((short int *)data + 1);
 	while( nrlines-- > 0 ) {
 		index_x = 0;
 		packets = *(uchar *)data;
-		(uchar *)data += 1;
+		data = (void *)((uchar *)data + 1);
 		while( packets > 0 ) {
 			index_x += *(uchar *)data;
-			(uchar *)data += 1;
+			data = (void *)((uchar *)data + 1);
 			type = *(char *)data;
-			(char *)data += 1;
+			data = (void *)((char *)data + 1);
 			if( type >= 0 ) {
 				memcpy( index + index_x, data, type );
 				index_x += type;
-				(uchar *)data += type;
+				data = (void *)((uchar *)data + type);
 				packets--;
 				continue;
 			}
 			memset( index + index_x, *(uchar *)data, -type );
 			index_x -= type;
-			(uchar *)data += 1;
+			data = (void *)((uchar *)data + 1);
 			packets--;
 		}
 		index += fli->scr_width;
@@ -261,7 +262,7 @@ int index_x;
 	width = fli->h.width;
 	index = 0;
 	while( lines-->0 ) {
-		(uchar *)data += 1;	/* skip byte containing number of packets */
+		data = (void *)((uchar *)data + 1);	/* skip byte containing number of packets */
 		/* start a loop to decode packets until end of line is reached */
 		index_x = 0;
 			while ( index_x < width ) {
@@ -305,7 +306,7 @@ int l;
 		index = graph_mem;
 		while( l-- > 0 ) {
 			memcpy( index, data, fli->h.width );
-			(uchar *)data += fli->h.width;
+			data = (void *)((uchar *)data + fli->h.width);
 			index += fli->scr_width;
 		}
 	}
@@ -329,7 +330,7 @@ static void showhelp( void ) {
 	puts( " -b          Process frames when they are loaded." );
 	puts( " -c          Keep a blank screen while frames are being loaded." );
 	puts( " -n <number> Play the animation sequence <n> times." );
-	puts( " -s <delay>  Set delay between frames to <delay>*0.01 seconds." );
+	puts( " -s <delay>  Set delay between frames to <delay> miliseconds." );
 	puts( " -           Read flic file from standard input." );
 	puts( "also standard aalib options are supported" );
 	puts( " -dim, -bold, -reverse, -normal for enabling attributes");
@@ -376,6 +377,10 @@ int i,j;
 					case 's' : if( i+k+1<argc ) {
 							k++;
 						   	options->speed = abs( atoi( argv[i+k] ) );
+							/* adjust to some reasonable value */
+							if (options->speed > 1000) options->speed = 1000;
+							/* convert to usec */
+							options->speed *= 1000;
 						   }
 						   break;
 					default  : showhelp(); 
@@ -435,17 +440,18 @@ static int open_fli( struct FLI *fli, struct OPTIONS *options ) {
 	if( (unsigned)fli->h.type==FLITYPE ) {
 		/* it's a fli. convert as much as possible to flc */
 		fli->flc = 0;
-		/* convert frame rate from 1/70 to 1/100 */
-		fli->h.speed *= 14;	/* 1/70 = 1.4/100 */
-		fli->h.speed /= 10;
-		/* ascpect ratio is ignored, but fix it anyway */
+		/* convert frame rate from 1/70 sec to usec */
+		fli->h.speed *= 100;
+		fli->h.speed /= 7;
+		fli->h.speed *= 1000;
+ 		/* ascpect ratio is ignored, but fix it anyway */
 		fli->h.aspectx = 6;
 		fli->h.aspecty = 5;
 		/* can't convert frame offsets */
 	}
 	else if( (unsigned)fli->h.type==FLCTYPE ) {
 		fli->flc = 1;
-		fli->h.speed /= 10;	/* convert msec to 1/100 sec */
+		fli->h.speed *= 1000;	/* convert msec to usec */
 	}
 	else {
 		puts( "File type not recognized." );
@@ -528,8 +534,6 @@ void *data;
 int i;
 	fc = fli->frame + fli->current;
 	data = fc->cd;
-	while( clock()<(fli->h.speed + fli->clock) ) { }
-	fli->clock = clock();
 	for( i=0; i<fc->subchunks; i++ ) {
 		/* switch( chunktype ) */
 		switch( *((short int *)((char *)data+4)) ) {
@@ -560,11 +564,35 @@ int i;
 			default :
 				puts( "unknown subchunk" );
 		}
-		data += *(long *)data;
+		data = (void *)((char *)data + *(long *)data);
 	}
 }
 		
-	
+long gettime(void) {
+struct timeval t;
+        gettimeofday(&t, NULL);
+        return(t.tv_usec);
+}
+
+int await() {
+#define T 10000   /* process key every 10ms */
+int i;
+long t;
+	t = gettime();
+	if (t < fli.time) t = t + 1E6;
+	t = fli.h.speed - (t - fli.time);
+	if (t > 0) {
+		if (t > T) {
+			for (i = 0; i < (t / T); i++) {
+				usleep(T);
+				if (f_getkey() == 'q') return(1);
+			}
+			usleep(t % T);
+		}
+		else usleep(t);
+	}
+	return(f_getkey() == 'q');
+}
 
 static void fastscale(char *b1, char *b2, int x1, int x2, int y1, int y2, int width1, int width2)
 {
@@ -741,6 +769,7 @@ int main( int argc, char *argv[] ) {
 int quit = 0;
 int playstartframe = 0;
 int first=1;
+long t, tdelta;
 	aa_parseoptions(NULL,NULL,&argc,argv);
 	parse_cmdln( argc, argv, &options );
 	strcpy( fli.filename, options.filename );
@@ -756,8 +785,8 @@ int first=1;
 		describe_fli( &fli );
 	}
 
-	/* otionally set delays */
-	if( !options.speed==-1 ) {
+	/* optionally set delays */
+	if( options.speed>=0 ) {
 		fli.h.speed = options.speed;
 	}
 
@@ -765,6 +794,7 @@ int first=1;
 	if( options.fast==1 ) {
 		fli.h.speed = 0;
 	}
+	
 
 	/* silly but might happen */
 	if( options.playrep<=0 ) {
@@ -793,7 +823,6 @@ int first=1;
 	}
 
 	fli.current = 0;
-	fli.clock = clock();
 	/* preloading */
 	/* first the 1st frame which is a full screen frame */
 	scan_to_frame( &fli );
@@ -817,33 +846,31 @@ int first=1;
 		scan_to_frame( &fli );
 		getframechunkdata( &fli );
 		if( options.firstp ) {
+			fli.time = gettime();
 			processframechunk( &fli );
 		}
 		if( options.release ) {
 			releaseframechunkdata( &fli );
 		}
 		if(first||options.firstp) {
-		fastscale(graph_mem,context->imagebuffer,
-			  fli.scr_width,aa_imgwidth(context),
-			  fli.scr_height,aa_imgheight(context),
-			  fli.scr_width,aa_imgwidth(context));
-		aa_renderpalette(context,pal,params,0,0,aa_imgwidth(context),aa_imgheight(context));
-		if(first&&!options.firstp)
-		  aa_puts(context,0,0,AA_SPECIAL,"Preloading...");
-		aa_flush(context);
+			fastscale(graph_mem,context->imagebuffer,
+			  	  fli.scr_width,aa_imgwidth(context),
+			  	  fli.scr_height,aa_imgheight(context),
+			  	  fli.scr_width,aa_imgwidth(context));
+			aa_renderpalette(context,pal,params,0,0,aa_imgwidth(context),aa_imgheight(context));
+			if(first&&!options.firstp)
+		  	  aa_puts(context,0,0,AA_SPECIAL,"Preloading...");
+			aa_flush(context);
 		}
 		fli.current++;
 		first=0;
-		if( !options.stdinp ) {
-			if( f_getkey()=='q' ) {
-				quit = 1;
-			}
-		}
+		if( f_getkey()=='q' ) quit = 1;
+                if(options.firstp&&!quit) quit = await();
 	}
 
 	if(!quit) {
 	
-	if( options.firstp ) {
+ 	if( options.firstp ) {
 		options.playrep--;
 		if( options.playrep==0 ) {
 			quit = 1;
@@ -852,6 +879,7 @@ int first=1;
 		
 	fli.current = playstartframe;
 	while( !quit ) {
+		fli.time = gettime();
 		getframechunkdata( &fli );
 		processframechunk( &fli );
 		if( options.release ) {
@@ -869,13 +897,11 @@ int first=1;
 			options.playrep--;
 			if( options.playrep==0 ) {
 				quit = 1;
+				break;
 			}
 		}
-		if( !options.stdinp ) {
-		if( f_getkey()=='q' ) {
-				quit = 1;
-			}
-		}
+                quit = await();
+
 	}
 	}
 		
