@@ -2272,12 +2272,12 @@ fi
         fi
     fi
 
-for name in ../aalib-*.*
+for name in ../aalib*
 do
 
     if $search_aalib
     then
-        if test -f $name/aalib.h
+        if test -f $name/src/aalib.h
         then
             LIBS1="$LIBS"
             LIBS="$LIBS "-L$name/src/.libs""
@@ -2330,7 +2330,7 @@ else
 fi
 
             if test "x$ac_cv_lib_aa_aa_init" = xyes; then
-              echo "$ac_t""Found aalib on $name/aalib.h" 1>&6
+              echo "$ac_t""Found aalib on $name/src/aalib.h" 1>&6
               LIBS="$LIBS "-L$name/src/.libs""
               CFLAGS="$CFLAGS "-I$name/src""
               search_aalib=false
@@ -2348,7 +2348,7 @@ then
   echo "Library AA-lib is required for aview!"
   echo "Please download it from http://aa-project.sourceforge.net"
   echo "Install AA-lib into /usr/local/.. tree or just compile in same"
-  echo "directory as bb"
+  echo "directory as aview"
   exit
 fi
 

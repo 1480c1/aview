@@ -54,9 +54,9 @@ if test "x$no_x" = x; then
 fi
 AC_AALIB(/usr/include, , )
 AC_AALIB(/usr/local/include, -L/usr/local/lib, -I/usr/local/include)
-for name in ../aalib-*.*
+for name in ../aalib*
 do
-AC_AALIB($name,"-L$name/src/.libs","-I$name/src")
+AC_AALIB($name/src,"-L$name/src/.libs","-I$name/src")
 done
 if $search_aalib
 then
@@ -64,7 +64,7 @@ then
   echo "Library AA-lib is required for aview!"
   echo "Please download it from http://aa-project.sourceforge.net"
   echo "Install AA-lib into /usr/local/.. tree or just compile in same"
-  echo "directory as bb"
+  echo "directory as aview"
   exit
 fi
 
