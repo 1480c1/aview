@@ -22,10 +22,8 @@ struct OPTIONS {
 	char release;		/* 1 = don't keep frames in memory */
 	char firstp;		/* 1 = process frames while loading */
 	char blank;		/* 1 = keep black screen while loading */
-	char speedf;		/* 1 = change fli.h.speed to options.speed */
 	char stdinp;		/* 1 = take flic file from stdin */
-	int speed;		/* speed gotten from command line */
-	char playrepf;		/* 1 = play flic (options.playrep) times */
+	int speed;		/* speed gotten from command line (or not if -1) */
 	int playrep;		/* nr of times to play animation */
 } options;
 
@@ -41,8 +39,6 @@ struct FLI {
 	char filename[NAMELEN]; /* filename of fli file */
 	char flc;		/* 0 = fli, 1 = flc */
 	int mode;		/* vgalib mode number to be used */
-	char playrepf;		/* 0 = play forever, 1 = use repcount */
-	int playrep;		/* nr of times to play flic */
 	int scr_width;		/* width of screen mode used */
 	int scr_height;		/* guess */
 	int current;		/* current frame index */
@@ -55,7 +51,6 @@ struct FLI {
 } fli;
 
 
-static int palette[3*256];		/* palette of fli, rgb values, 256 times... */
 static aa_palette pal;
 static aa_context *context;
 static aa_renderparams *params;
@@ -351,10 +346,8 @@ int i,j;
 	options->release = 0;
 	options->firstp = 0;
 	options->blank = 0;
-	options->speedf = 0;
-	options->playrepf = 0;
 	options->playrep = 1;
-	options->speed = 0;
+	options->speed = -1;
 	options->stdinp = 0;
 	for( i=1; i<argc; i++ ) {
 		if( *argv[i]=='-' ) {
@@ -365,7 +358,7 @@ int i,j;
 				options->stdinp = 1;
 			}
 			j = 1;
-			k = 1;
+			k = 0;
 			while( (c = *(argv[i]+j))!='\0' ) {
 				switch( c ) {
 					case 'f' : options->fast = 1; break;
@@ -375,19 +368,15 @@ int i,j;
 					case 'c' : options->blank = 1; break;
 					case '?' :
 					case 'h' : showhelp(); exit( 0 ); break;
-					case 'n' : options->playrepf = 1;
-						   if( i+k<argc ) {
+					case 'n' : if( i+k+1<argc ) {
+							k++;
 							options->playrep = abs( atoi( argv[i+k] ) );
-							argv[i+k] = NULL;
 						   }
-						   k++;
 						   break;
-					case 's' : options->speedf = 1;
-						   if( i+k<argc ) {
+					case 's' : if( i+k+1<argc ) {
+							k++;
 						   	options->speed = abs( atoi( argv[i+k] ) );
-							argv[i+k] = NULL;
 						   }
-						   k++;
 						   break;
 					default  : showhelp(); 
 						   puts( "Unknown option." );
@@ -395,6 +384,7 @@ int i,j;
 				}
 				j++;
 			}
+			i = i+k;
 		}
 		else {
 			if( argv[i]!=NULL ) {
@@ -766,13 +756,8 @@ int first=1;
 		describe_fli( &fli );
 	}
 
-	/* optionally reduce delays to 0 */
-	if( options.fast==1 ) {
-		fli.h.speed = 0;
-	}
-	
 	/* otionally set delays */
-	if( options.speedf ) {
+	if( !options.speed==-1 ) {
 		fli.h.speed = options.speed;
 	}
 
@@ -780,11 +765,9 @@ int first=1;
 	if( options.fast==1 ) {
 		fli.h.speed = 0;
 	}
-	
-	fli.playrepf = options.playrepf;
-	fli.playrep = options.playrep;
-	if( fli.playrepf && fli.playrep<=0 ) {
-		/* silly but might happen */
+
+	/* silly but might happen */
+	if( options.playrep<=0 ) {
 		exit( 0 );
 	}
 	
@@ -860,7 +843,7 @@ int first=1;
 
 	if(!quit) {
 	
-	if( options.firstp && options.playrepf ) {
+	if( options.firstp ) {
 		options.playrep--;
 		if( options.playrep==0 ) {
 			quit = 1;
@@ -883,15 +866,13 @@ int first=1;
 		aa_flush(context);
 		if( fli.current>fli.h.frames ) {
 			fli.current = 1;
-			if( options.playrepf ) {
-				options.playrep--;
-				if( options.playrep==0 ) {
-					quit = 1;
-				}
+			options.playrep--;
+			if( options.playrep==0 ) {
+				quit = 1;
 			}
 		}
 		if( !options.stdinp ) {
-			if( f_getkey()=='q' ) {
+		if( f_getkey()=='q' ) {
 				quit = 1;
 			}
 		}

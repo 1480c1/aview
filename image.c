@@ -15,9 +15,12 @@ int load_image(char *name)
     int type;
     FILE *file;
 
-    if ((file = fopen(name, "rb")) == NULL) {
-	printf("File not found\n");
-	return 0;
+    if (!strcmp(name, "-stdin")) file = stdin;
+    else {
+        if ((file = fopen(name, "rb")) == NULL) {
+            printf("File not found\n");
+            return 0;
+	}
     }
     if (getc(file) != 'P') {
 	printf("Invalid magic-not p?m family format\n");

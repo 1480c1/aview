@@ -9,12 +9,13 @@ myconvert()
 {
    #Uncomment following lines if you want to use pnmtools.  They performs
    #better than imagemagic but tends to be broken on most systems.
-
-   #if anytopnm $1 >/tmp/aview$$.pgm; then
-     #exit
-   #else
-     convert -colorspace gray $1 /tmp/aview$$.pgm 
-   #fi
+  
+   if anytopnm $1 >/tmp/aview$$.pgm; then
+     exit
+   elif convert -colorspace gray $1 /tmp/aview$$.pgm; then
+     exit
+   fi
+   anytopnm $1 >/tmp/aview$$.pgm
    while true; do
      echo "0 " > /tmp/aview$$.pgm
    done
