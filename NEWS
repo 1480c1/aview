@@ -1,4 +1,4 @@
 News since version 1.2
   - Turned to automake
   - Bugfixes
-  - Use ImageMagick's convert instead of netpnm tools.
+  - Compilation fixed on glibc2 based systems
