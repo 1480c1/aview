@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <malloc.h>
 
 int imgwidth, imgheight;
@@ -6,6 +7,9 @@ unsigned char *imgdata;
 #define PBM 0
 #define PGM 1
 #define PPM 2
+
+/* no jo, zase byl nekdo liny pouzit autoconf... */
+#define HAVE_ISATTY
 
 int load_image(char *name)
 {
@@ -15,12 +19,20 @@ int load_image(char *name)
     int type;
     FILE *file;
 
-    if (!strcmp(name, "-stdin")) file = stdin;
+    if (name[0]=='\0') {
+#ifdef HAVE_ISATTY
+      if (isatty(STDIN_FILENO)) {
+        printf("Missing filename.\n");
+        return 0;
+      }
+#endif
+      file = stdin;
+    }
     else {
-        if ((file = fopen(name, "rb")) == NULL) {
-            printf("File not found\n");
-            return 0;
-	}
+      if ((file = fopen(name, "rb")) == NULL) {
+        printf("File not found\n");
+        return 0;
+      }
     }
     if (getc(file) != 'P') {
 	printf("Invalid magic-not p?m family format\n");
@@ -28,7 +40,7 @@ int load_image(char *name)
     }
     c = getc(file);
     if (c < '1' || c > '6') {
-	printf("Invalid magic-unknown p?m familo format\n");
+	printf("Invalid magic-unknown p?m family format\n");
 	return 0;
     }
     if (c >= '4')
@@ -97,6 +109,6 @@ int load_image(char *name)
     }
     for (i = 0; i < imgwidth * imgheight; i++)
 	imgdata[i] = imgdata[i] * 255 / max;
-    fclose(file);
+    if (name[0]!='\0') fclose(file);
     return 1;
 }
