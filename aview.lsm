@@ -1,7 +1,7 @@
 Begin3
 Title:          Aview - High qualitty ascii art renderer/animation player
-Version:        1.0
-Entered-date:   Jul 25 1996
+Version:        1.3
+Entered-date:   Apr 25 2001
 
 Description:    aview is an high quality ascii-art image(pgm) browser and
                 animation(fli/flc) player usefull especially with 
@@ -9,16 +9,16 @@ Description:    aview is an high quality ascii-art image(pgm) browser and
 
 Keywords:       X11 ascii-art text cool art ironing cooking fire library c GNU
 		demo fun game fli pgm pnm
-Author:         hubicka@limax.paru.cas.cz (Jan Hubicka)
+Author:         hubicka@freesoft.cz (Jan Hubicka)
 		                   (Filip Kupsa)
 		titana@mbox.vol.cz (Mojmir Svoboda)
 		toman@horac.ta.jcu.cz (Kamil Toman)
-Maintained-by:  toman@horac.ta.jcu.cz (Kamil Toman)
+Maintained-by:  hubicka@freesoft.cz (Jan Hubicka)
 
 Primary-site:   sunsite.unc.edu /pub/Linux/apps/graphics/viewers
-		aview-1.0.tar.gz
+		aview-1.3.tar.gz
 Alternate-site: tsx-11.mit.edu /pub/linux/sources/usr.bin
-		aview-1.0.tar.gz
+		aview-1.3.tar.gz
 
 Platform:       dos (VG + MDA), stdio, curses, slang, X11, gpm, linux-console
                 Sound:  OSS, Sun audio, SGI, DEC Aplha, AIX, HP-UX, DOS 

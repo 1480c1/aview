@@ -1,0 +1,44 @@
+.TH NAME SECTION 
+.\" NAME should be all caps, SECTION should be 1-8, maybe w/ subsection
+.\" other parms are allowed: see man(7), man(1)
+.SH NAME
+aview \- An high quality ascii-art image(pgm) browser
+.SH SYNOPSIS
+.B aview
+.I "[options] filename.p[ngbp]m"
+.SH "DESCRIPTION"
+This manual page documents briefly the
+.BR aview ,
+and
+.B asciiview
+commands.
+This manual page was written for the Debian GNU/Linux distribution
+because the original program does not have a manual page.
+.PP
+.B aview/asciiview
+is a program that show files with ascii-art. 
+.B aview
+support zooming/unzooming, three dithering modes, Inversion, Contrast, Bright,
+Gamma control and can save into many formats (html, text, ansi, more/less
+etc...). The 
+.B aview
+can only show files in the PNM file format. But the 
+.B asciiview 
+program convert the file formats to PNM (with extern programs like NetPBM and
+ImageMagic) and start 
+.B aview.
+It's support the driver from the aalib. Normaly slang, x11 and stdout. It
+support the mousedriver (X11 and gpm) too. 
+.SH OPTIONS
+For a complete description, make only
+.TP
+.B aview 
+.TP 
+This show all option.
+.SH "SEE ALSO"
+.B bb
+,
+.B "aalib (info-page)"
+.SH AUTHOR
+This manual page was written by Michael Bramer <grisu@debian.org>,
+for the Debian GNU/Linux system (but may be used by others).

@@ -7,11 +7,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#ifdef __GNUC__
-#ifdef __i386__
-#include "sstring.h"	/* noticeably faster*/
-#endif
-#endif
 #include <time.h>
 #include <aalib.h>
 
