@@ -12,7 +12,7 @@ AC_PROG_MAKE_SET
 
 dnl Check for AA-lib
 AM_PATH_AALIB(1.4.0, , AC_MSG_ERROR([*** AALIB >= 1.4.0 not installed - please install first ***]))
-CFLAGS="$CLFAGS $AALIB_CLFAGS"
+CFLAGS="$CFLAGS $AALIB_CFLAGS"
 LIBS="$CLFAGS $AALIB_LIBS"
 
 AC_OUTPUT(Makefile)

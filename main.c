@@ -2,7 +2,6 @@
 #include "image.h"
 #include "ui.h"
 
-extern struct aa_driver curses_d;
 int main(int argc, char **argv)
 {
     aa_parseoptions(NULL,NULL,&argc,argv);

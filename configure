@@ -1518,7 +1518,7 @@ rm -f conftest*
   
   rm -f conf.aalibtest
 
-CFLAGS="$CLFAGS $AALIB_CLFAGS"
+CFLAGS="$CFLAGS $AALIB_CFLAGS"
 LIBS="$CLFAGS $AALIB_LIBS"
 
 trap '' 1 2 15
