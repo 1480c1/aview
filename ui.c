@@ -166,7 +166,7 @@ static void ui_help(void)
     aa_puts(context, 0, 1, AA_SPECIAL, " asciiarted image viewer by Jan Hubicka                            ");
     aa_puts(context, 0, 2, AA_SPECIAL, " a,w,d,x - move image one row/column  A,W,D,X - move image one page");
     aa_puts(context, 0, 3, AA_SPECIAL, " z       - unzoom                     Z       - zoom               ");
-    aa_puts(context, 0, 4, AA_SPECIAL, " p       - generate files for HP-LASER JET                         ");
+    aa_puts(context, 0, 4, AA_SPECIAL, " s       - Save image                                              ");
     aa_puts(context, 0, 5, AA_SPECIAL, " m       - change dithering mode      q       - quit               ");
     aa_puts(context, 0, 6, AA_SPECIAL, " i       - turns inversion on         I       - intversion off     ");
     aa_puts(context, 0, 7, AA_SPECIAL, " u       - select attributes          f       - select font        ");
