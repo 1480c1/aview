@@ -560,7 +560,7 @@ int i;
 			default :
 				puts( "unknown subchunk" );
 		}
-		(char *)data += *(long *)data;
+		data += *(long *)data;
 	}
 }
 		
