@@ -452,7 +452,7 @@ void main_loop(void)
 	    break;
 	case '-':
 	    {
-		int tmp = (x2 - x1) / 8;
+		int tmp = (x2 - x1 + 7) / 8;
 		x1 -= tmp;
 		x2 += tmp;
 		tmp = (y2 - y1) / 8;

@@ -1,79 +1,18 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(main.c)
-AM_INIT_AUTOMAKE(aview, 1.3)
+AM_INIT_AUTOMAKE(aview, 1.3.0)
 
 use_cc_g_flag=no
-CCOPTS="$CFLAGS"
 AC_PROG_CC
-CFLAGS="$CCOPTS"
 AC_PROG_INSTALL
-AC_CHECK_PROG(system,uname,`uname`,unknown)
-if test "x$system" = xLinux; then
-AC_CHECK_PROG(machine,uname,`uname --machine`,unknown)
-fi
-AC_CHECK_LIB(gpm, Gpm_Repeat)
-AC_CHECK_LIB(m, pow)
-AC_CHECK_LIB(ncurses, initscr)
-if test "x$ac_cv_lib_ncurses_initscr" = xno; then
-AC_CHECK_LIB(curses, initscr)
-fi
 AC_HEADER_STDC
-
-search_aalib=true
-AC_DEFUN(AC_AALIB, [
-    if $search_aalib
-    then
-        if test -f $1/aalib.h
-        then
-            LIBS1="$LIBS"
-            LIBS="$LIBS $2"
-            unset ac_cv_lib_aa_aa_init
-            AC_CHECK_LIB(aa, aa_init)
-            if test "x$ac_cv_lib_aa_aa_init" = xyes; then
-              AC_MSG_RESULT(Found aalib on $1/aalib.h)
-              LIBS="$LIBS $2"
-              CFLAGS="$CFLAGS $3"
-              search_aalib=false
-            else
-             unset ac_cv_lib_aa_aa_init
-             LIBS="$LIBS1"
-            fi
-        fi
-    fi
-])
 
 dnl Checks for programs.
 AC_PROG_MAKE_SET
 
-dnl Checks for libraries.
-AC_PATH_X
-AC_PATH_XTRA
-if test "x$no_x" = x; then
-    LIBS="$LIBS $X_EXTRA_LIBS $X_LIBS -lX11"
-    CFLAGS="$CFLAGS $X_CFLAGS"
-fi
-AC_AALIB(/usr/include, , )
-AC_AALIB(/usr/local/include, -L/usr/local/lib, -I/usr/local/include)
-for name in ../aalib*
-do
-AC_AALIB($name/src,"-L$name/src/.libs","-I$name/src")
-done
-if $search_aalib
-then
-  echo "--------------------------------------------------------"
-  echo "Library AA-lib is required for aview!"
-  echo "Please download it from http://aa-project.sourceforge.net"
-  echo "Install AA-lib into /usr/local/.. tree or just compile in same"
-  echo "directory as aview"
-  exit
-fi
-
-dnl Replace `main' with a function in -lslang:
-AC_CHECK_LIB(slang, SLsmg_init_smg)
-
-dnl Checks for header files.
-AC_HEADER_STDC
-AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(malloc.h sys/ioctl.h sys/time.h unistd.h)
+dnl Check for AA-lib
+AM_PATH_AALIB(1.4.0, , AC_MSG_ERROR([*** AALIB >= 1.4.0 not installed - please install first ***]))
+CFLAGS="$CLFAGS $AALIB_CLFAGS"
+LIBS="$CLFAGS $AALIB_LIBS"
 
 AC_OUTPUT(Makefile)
